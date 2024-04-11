@@ -332,10 +332,21 @@ class mainprocess(object) :
             cmd = '{flye} -t {n_cpu} -g 5m --plasmids --subassemblies {asm} -o {outdir}'.format(
                   asm=' '.join([contigs, asm1, asm2]), outdir=outdir2, **parameters)
 
-            flye_run = Popen( cmd.split(), stdout=PIPE, bufsize=0, universal_newlines=True)
+            flye_run = Popen( cmd.split(), stdout=PIPE, stderr=PIPE, bufsize=0, universal_newlines=True, text=True)
             flye_run.communicate()
+
+            with open('{outdir2}/stdout.txt'.format(outdir2=outdir2), 'w') as fh :
+                for line in flye_run.stdout :
+                    fh.write(line)
+
+            with open('{outdir2}/stderr.txt'.format(outdir2=outdir2), 'r') as fh :
+                for line in flye_run.stderr:
+                    fh.write(line)
+
             if flye_run.returncode != 0 :
-                sys.exit(20123)
+                logger(f"Flye failed with return code {flye_run.returncode}, please see {outdir2}/stdout.txt and {outdir2}/stderr.txt for more information")
+                sys.exit(flye_run.returncode)
+
             asm2 = self._flye_dedup('{outdir2}/assembly.fasta'.format(outdir2=outdir2), '{outdir2}/assembly.dedup.fasta'.format(outdir2=outdir2), '{outdir2}/assembly_info.txt'.format(outdir2=outdir2))
             
             with open(asm2, 'r') as fin :
@@ -370,10 +381,21 @@ class mainprocess(object) :
             
             cmd = '{flye} -t {n_cpu} -g 5m --plasmids --subassemblies {asm} --polish-target {asm1} -o {outdir3}'.format(
                   asm=' '.join([contigs, asm1, asm2, asm3]), asm1=asm1, outdir3=outdir3, **parameters)
-            flye_run = Popen( cmd.split(), stdout=PIPE, bufsize=0, universal_newlines=True)
+            flye_run = Popen( cmd.split(), stdout=PIPE, stderr=PIPE, bufsize=0, universal_newlines=True, text=True)
             flye_run.communicate()
+
+            with open('{outdir3}/stdout.txt'.format(outdir3=outdir3), 'w') as fh :
+                for line in flye_run.stdout :
+                    fh.write(line)
+
+            with open('{outdir3}/stderr.txt'.format(outdir3=outdir3), 'r') as fh :
+                for line in flye_run.stderr:
+                    fh.write(line)
+
             if flye_run.returncode != 0 :
-                sys.exit(20123)
+                logger(f"Flye failed with return code {flye_run.returncode}, please see {outdir3}/stdout.txt and {outdir3}/stderr.txt for more information")
+                sys.exit(flye_run.returncode)
+
             flye_file = '{outdir3}/polished_1.fasta'.format(outdir3=outdir3)
         shutil.copyfile( flye_file, output_file )
         logger('Flye assembly in {0}'.format(output_file))
@@ -401,8 +423,17 @@ class mainprocess(object) :
         # performance with SRR23242239 and no samples where it improved performance so this is now skipped
         cmd = '{python} {spades} -t {n_cpu} {read_input} -k {kmer} -o {outdir}'.format(
              python=sys.executable, read_input=' '.join(read_input), kmer=kmer, outdir=outdir, **parameters)
-        spades_run = Popen( cmd.split(' '), stdout=PIPE, bufsize=0, universal_newlines=True)
+        spades_run = Popen( cmd.split(' '), stdout=PIPE, bufsize=0, universal_newlines=True, stderr=PIPE, text=True)
         spades_run.communicate()
+
+        with open('{outdir}/stdout.txt'.format(outdir=outdir), 'w') as fh :
+            for line in spades_run.stdout :
+                fh.write(line)
+
+        with open('{outdir}/stderr.txt'.format(outdir=outdir), 'r') as fh :
+            for line in spades_run.stderr:
+                fh.write(line)
+
         if spades_run.returncode != 0 :
             # cmd = '{python} {spades} -t {n_cpu} {read_input} -k {kmer} -o {outdir}'.format(
             #    python=sys.executable, read_input=' '.join(read_input), kmer=kmer,
@@ -410,7 +441,8 @@ class mainprocess(object) :
             # spades_run = Popen(cmd.split(' '), stdout=PIPE, bufsize=0, universal_newlines=True)
             # spades_run.communicate()
             # if spades_run.returncode != 0 :
-                sys.exit(20123)
+                logger(f"SPAdes failed with return code {spades_run.returncode}, please see {outdir}/stdout.txt and {outdir}/stderr.txt for more information")
+                sys.exit(spades_run.returncode)
         try :
             shutil.copyfile( '{outdir}/scaffolds.fasta'.format(outdir=outdir), output_file )
         except :
