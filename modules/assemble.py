@@ -333,14 +333,14 @@ class mainprocess(object) :
                   asm=' '.join([contigs, asm1, asm2]), outdir=outdir2, **parameters)
 
             flye_run = Popen( cmd.split(), stdout=PIPE, stderr=PIPE, bufsize=0, universal_newlines=True, text=True)
-            flye_run.communicate()
+            stdout, stderr = flye_run.communicate()
 
             with open('{outdir2}/stdout.txt'.format(outdir2=outdir2), 'w') as fh :
-                for line in flye_run.stdout :
+                for line in stdout:
                     fh.write(line)
 
             with open('{outdir2}/stderr.txt'.format(outdir2=outdir2), 'r') as fh :
-                for line in flye_run.stderr:
+                for line in stderr:
                     fh.write(line)
 
             if flye_run.returncode != 0 :
@@ -382,14 +382,14 @@ class mainprocess(object) :
             cmd = '{flye} -t {n_cpu} -g 5m --plasmids --subassemblies {asm} --polish-target {asm1} -o {outdir3}'.format(
                   asm=' '.join([contigs, asm1, asm2, asm3]), asm1=asm1, outdir3=outdir3, **parameters)
             flye_run = Popen( cmd.split(), stdout=PIPE, stderr=PIPE, bufsize=0, universal_newlines=True, text=True)
-            flye_run.communicate()
+            stdout, stderr = flye_run.communicate()
 
             with open('{outdir3}/stdout.txt'.format(outdir3=outdir3), 'w') as fh :
-                for line in flye_run.stdout :
+                for line in stdout:
                     fh.write(line)
 
             with open('{outdir3}/stderr.txt'.format(outdir3=outdir3), 'r') as fh :
-                for line in flye_run.stderr:
+                for line in stderr:
                     fh.write(line)
 
             if flye_run.returncode != 0 :
@@ -424,14 +424,14 @@ class mainprocess(object) :
         cmd = '{python} {spades} -t {n_cpu} {read_input} -k {kmer} -o {outdir}'.format(
              python=sys.executable, read_input=' '.join(read_input), kmer=kmer, outdir=outdir, **parameters)
         spades_run = Popen( cmd.split(' '), stdout=PIPE, bufsize=0, universal_newlines=True, stderr=PIPE, text=True)
-        spades_run.communicate()
+        stdout, stderr = spades_run.communicate()
 
         with open('{outdir}/stdout.txt'.format(outdir=outdir), 'w') as fh :
-            for line in spades_run.stdout :
+            for line in stdout :
                 fh.write(line)
 
         with open('{outdir}/stderr.txt'.format(outdir=outdir), 'r') as fh :
-            for line in spades_run.stderr:
+            for line in stderr:
                 fh.write(line)
 
         if spades_run.returncode != 0 :
