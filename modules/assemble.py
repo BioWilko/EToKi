@@ -339,7 +339,7 @@ class mainprocess(object) :
                 for line in stdout:
                     fh.write(line)
 
-            with open('{outdir2}/stderr.txt'.format(outdir2=outdir2), 'r') as fh :
+            with open('{outdir2}/stderr.txt'.format(outdir2=outdir2), 'w') as fh :
                 for line in stderr:
                     fh.write(line)
 
@@ -388,7 +388,7 @@ class mainprocess(object) :
                 for line in stdout:
                     fh.write(line)
 
-            with open('{outdir3}/stderr.txt'.format(outdir3=outdir3), 'r') as fh :
+            with open('{outdir3}/stderr.txt'.format(outdir3=outdir3), 'w') as fh :
                 for line in stderr:
                     fh.write(line)
 
@@ -430,7 +430,7 @@ class mainprocess(object) :
             for line in stdout :
                 fh.write(line)
 
-        with open('{outdir}/stderr.txt'.format(outdir=outdir), 'r') as fh :
+        with open('{outdir}/stderr.txt'.format(outdir=outdir), 'w') as fh :
             for line in stderr:
                 fh.write(line)
 
