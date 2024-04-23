@@ -17,7 +17,7 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 RUN python get-pip.py
 
 #Install quast and other required python libraries
-RUN pip install quast ete3 numpy==1.20.3 pandas scikit-learn psutil matplotlib numba --ignore-installed
+RUN pip install quast ete3 numpy==1.20.3 pandas scikit-learn psutil matplotlib numba biopython --ignore-installed
 
 # Install EtoKI (will also install assemblers: spades / megahit, and download usearch executable)
 WORKDIR /bin
